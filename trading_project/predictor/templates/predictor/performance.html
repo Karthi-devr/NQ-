@@ -1,0 +1,194 @@
+{% extends 'predictor/base.html' %}
+
+{% block content %}
+<div class="diagnostic-header">
+    <h2>Model Diagnostics & Performance</h2>
+    <p>Detailed verification metrics and features from our offline XGBoost training pipeline (Time-Series split: 80% train, 20% test).</p>
+</div>
+
+{% if models_ready %}
+<!-- Metrics Comparison Table -->
+<div class="panel" style="margin-bottom: 2rem; overflow-x: auto;">
+    <div class="panel-title">Model Performance Summary</div>
+    <table class="metrics-comparison-table">
+        <thead>
+            <tr>
+                <th>Model Mode</th>
+                <th>Train Accuracy</th>
+                <th>Test Accuracy</th>
+                <th>Test Precision (Macro)</th>
+                <th>Test Recall (Macro)</th>
+                <th>Test F1-Score (Macro)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mode, metrics in metadata.items %}
+            <tr>
+                <td style="font-weight: 700; font-family: var(--font-heading);">
+                    {% if mode == '1h' %}1 Hour Mode
+                    {% elif mode == '4h' %}4 Hour Mode
+                    {% elif mode == '1d' %}1 Day Mode
+                    {% else %}General Mode (1H + 4H + 1D)
+                    {% endif %}
+                </td>
+                <td class="val-positive">{{ metrics.train_accuracy|floatformat:4 }}</td>
+                <td class="val-positive" style="font-weight: bold; color: var(--accent);">{{ metrics.test_accuracy|floatformat:4 }}</td>
+                <td>{{ metrics.precision_macro|floatformat:4 }}</td>
+                <td>{{ metrics.recall_macro|floatformat:4 }}</td>
+                <td style="font-weight: bold;">{{ metrics.f1_macro|floatformat:4 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Diagnostics Grid (Grid of models) -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+    {% for mode, metrics in metadata.items %}
+    <div class="panel">
+        <div class="panel-title" style="margin-bottom: 1rem;">
+            <span>
+                {% if mode == '1h' %}1 Hour Model Details
+                {% elif mode == '4h' %}4 Hour Model Details
+                {% elif mode == '1d' %}1 Day Model Details
+                {% else %}General Model Details
+                {% endif %}
+            </span>
+        </div>
+        
+        <!-- Confusion Matrix Section -->
+        <div style="margin-bottom: 1.5rem;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); text-align: center;">Confusion Matrix (Test Set)</div>
+            <div class="matrix-container">
+                <div class="matrix-grid">
+                    <!-- Header -->
+                    <div class="matrix-header-cell" style="font-size: 0.65rem;">True \ Pred</div>
+                    <div class="matrix-header-cell">Bearish</div>
+                    <div class="matrix-header-cell">Neutral</div>
+                    <div class="matrix-header-cell">Bullish</div>
+                    
+                    <!-- Row 0: True Bearish -->
+                    <div class="matrix-header-cell" style="text-align: right; justify-content: flex-end; padding-right: 6px;">Bearish</div>
+                    <div class="matrix-cell {% if forloop.counter0 == 0 %}matrix-diag{% endif %}">
+                        <!-- element [0][0] -->
+                        {% for row in metrics.confusion_matrix %}
+                            {% if forloop.counter0 == 0 %}
+                                {% for val in row %}
+                                    {% if forloop.counter0 == 0 %}{{ val }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="matrix-cell">
+                        <!-- element [0][1] -->
+                        {% for row in metrics.confusion_matrix %}
+                            {% if forloop.counter0 == 0 %}
+                                {% for val in row %}
+                                    {% if forloop.counter0 == 1 %}{{ val }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="matrix-cell">
+                        <!-- element [0][2] -->
+                        {% for row in metrics.confusion_matrix %}
+                            {% if forloop.counter0 == 0 %}
+                                {% for val in row %}
+                                    {% if forloop.counter0 == 2 %}{{ val }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <!-- Row 1: True Neutral -->
+                    <div class="matrix-header-cell" style="text-align: right; justify-content: flex-end; padding-right: 6px;">Neutral</div>
+                    <div class="matrix-cell">
+                        <!-- element [1][0] -->
+                        {% for row in metrics.confusion_matrix %}
+                            {% if forloop.counter0 == 1 %}
+                                {% for val in row %}
+                                    {% if forloop.counter0 == 0 %}{{ val }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="matrix-cell matrix-diag">
+                        <!-- element [1][1] -->
+                        {% for row in metrics.confusion_matrix %}
+                            {% if forloop.counter0 == 1 %}
+                                {% for val in row %}
+                                    {% if forloop.counter0 == 1 %}{{ val }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="matrix-cell">
+                        <!-- element [1][2] -->
+                        {% for row in metrics.confusion_matrix %}
+                            {% if forloop.counter0 == 1 %}
+                                {% for val in row %}
+                                    {% if forloop.counter0 == 2 %}{{ val }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <!-- Row 2: True Bullish -->
+                    <div class="matrix-header-cell" style="text-align: right; justify-content: flex-end; padding-right: 6px;">Bullish</div>
+                    <div class="matrix-cell">
+                        <!-- element [2][0] -->
+                        {% for row in metrics.confusion_matrix %}
+                            {% if forloop.counter0 == 2 %}
+                                {% for val in row %}
+                                    {% if forloop.counter0 == 0 %}{{ val }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="matrix-cell">
+                        <!-- element [2][1] -->
+                        {% for row in metrics.confusion_matrix %}
+                            {% if forloop.counter0 == 2 %}
+                                {% for val in row %}
+                                    {% if forloop.counter0 == 1 %}{{ val }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="matrix-cell matrix-diag">
+                        <!-- element [2][2] -->
+                        {% for row in metrics.confusion_matrix %}
+                            {% if forloop.counter0 == 2 %}
+                                {% for val in row %}
+                                    {% if forloop.counter0 == 2 %}{{ val }}{% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Features List -->
+        <div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Top Predictive Features</div>
+            <ul style="font-size: 0.85rem; padding-left: 1.2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 0.3rem; color: var(--text-secondary);">
+                {% for item in metrics.feature_importances_display|slice:":8" %}
+                <li>
+                    <strong>{{ item.feature }}</strong>: 
+                    <span style="color: var(--accent);">{{ item.importance_pct }}%</span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<div class="panel" style="text-align: center; padding: 3rem; color: var(--text-secondary);">
+    <h2>No Models Found</h2>
+    <p style="margin-top: 1rem;">Please run the training pipeline first: `python scripts/train_models.py` to generate the XGBoost models and evaluation metadata.</p>
+</div>
+{% endif %}
+{% endblock %}

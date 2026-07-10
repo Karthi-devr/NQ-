@@ -1,0 +1,300 @@
+{% extends 'predictor/base.html' %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <!-- Left Column: Input Form -->
+    <div class="panel">
+        <div class="panel-title">
+            <span>Model Inputs</span>
+            <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">Configure Stock Returns (%)</span>
+        </div>
+
+        <!-- Mode Selector -->
+        <form method="POST" id="predict-form" action="{% url 'dashboard' %}">
+            {% csrf_token %}
+            <input type="hidden" name="mode" id="mode-input" value="{{ selected_mode }}">
+            
+            <div class="mode-selector">
+                <button type="button" class="mode-btn {% if selected_mode == '1h' %}active{% endif %}" onclick="setMode('1h')">1 Hour</button>
+                <button type="button" class="mode-btn {% if selected_mode == '4h' %}active{% endif %}" onclick="setMode('4h')">4 Hour</button>
+                <button type="button" class="mode-btn {% if selected_mode == '1d' %}active{% endif %}" onclick="setMode('1d')">1 Day</button>
+                <button type="button" class="mode-btn {% if selected_mode == 'general' %}active{% endif %}" onclick="setMode('general')">General</button>
+            </div>
+
+
+            <!-- Dynamic Input Grid -->
+            <div class="stock-grid">
+                {% for stock in stock_data %}
+                <div class="stock-input-card">
+                    <div class="stock-label">
+                        <span class="stock-symbol">{{ stock.symbol }}</span>
+                        <span class="stock-weight">Weight: {{ stock.weight|floatformat:2 }}</span>
+                    </div>
+                    
+                    <!-- 1H Input -->
+                    <div class="stock-input-wrapper" id="div-{{ stock.symbol }}-1h" {% if selected_mode != '1h' and selected_mode != 'general' %}style="display:none;"{% endif %}>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">1H:</span>
+                        <input type="number" step="0.01" class="stock-input" name="{{ stock.symbol }}_1h" value="{{ stock.val_1h }}" placeholder="0.00">
+                        <span class="percent-sign">%</span>
+                    </div>
+
+                    <!-- 4H Input -->
+                    <div class="stock-input-wrapper" id="div-{{ stock.symbol }}-4h" {% if selected_mode != '4h' and selected_mode != 'general' %}style="display:none;"{% endif %}>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">4H:</span>
+                        <input type="number" step="0.01" class="stock-input" name="{{ stock.symbol }}_4h" value="{{ stock.val_4h }}" placeholder="0.00">
+                        <span class="percent-sign">%</span>
+                    </div>
+
+                    <!-- 1D Input -->
+                    <div class="stock-input-wrapper" id="div-{{ stock.symbol }}-1d" {% if selected_mode != '1d' and selected_mode != 'general' %}style="display:none;"{% endif %}>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">1D:</span>
+                        <input type="number" step="0.01" class="stock-input" name="{{ stock.symbol }}_1d" value="{{ stock.val_1d }}" placeholder="0.00">
+                        <span class="percent-sign">%</span>
+                    </div>
+                    
+                    <!-- Prev Day Input (for general only) -->
+                    <div class="stock-input-wrapper" id="div-{{ stock.symbol }}-prev_day" {% if selected_mode != 'general' %}style="display:none;"{% endif %}>
+                        <span style="font-size: 0.75rem; color: var(--text-muted);">Prev Day:</span>
+                        <input type="number" step="0.01" class="stock-input" name="{{ stock.symbol }}_prev_day_ret" value="{{ stock.val_prev_day }}" placeholder="0.00">
+                        <span class="percent-sign">%</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="predict-btn">
+                <span>Run prediction Model</span>
+                <span>⚡</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Right Column: Results & Insights -->
+    <div class="results-container">
+        {% if error %}
+        <div class="panel" style="border-color: var(--bearish); background-color: var(--bearish-glow);">
+            <h3 style="color: var(--bearish); margin-bottom: 0.5rem;">Error</h3>
+            <p>{{ error }}</p>
+        </div>
+        {% endif %}
+
+        {% if prediction %}
+        <!-- Prediction Outcome Card -->
+        <div class="result-card {% if prediction == 'Bullish' %}bullish{% elif prediction == 'Bearish' %}bearish{% else %}neutral{% endif %}">
+            <div class="result-glow"></div>
+            <div class="result-label">Nasdaq-100 Intraday Direction</div>
+            <div class="result-value">{{ prediction }}</div>
+            
+            {% for class, prob in probabilities.items %}
+                {% if class == prediction %}
+                <div class="result-percentage-indicator">Probability: {{ prob }}%</div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Class Probabilities Meter -->
+        <div class="panel">
+            <div class="panel-title">Probability Breakdown</div>
+            <div class="probability-bars">
+                {% for label, prob in probabilities.items %}
+                <div class="prob-row">
+                    <div class="prob-labels">
+                        <span>{{ label }}</span>
+                        <span>{{ prob }}%</span>
+                    </div>
+                    <div class="prob-bar-bg">
+                        <div class="prob-bar-fill {% if label == 'Bullish' %}prob-bullish{% elif label == 'Bearish' %}prob-bearish{% else %}prob-neutral{% endif %}" style="width: {{ prob }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Market Breadth Metrics -->
+        <div class="panel">
+            <div class="panel-title">Market Breadth & Alignment</div>
+            <div class="metrics-summary-grid">
+                <div class="metric-summary-card">
+                    <div class="metric-summary-label">Agreement Score</div>
+                    <div class="metric-summary-value val-positive" style="color: var(--accent);">{{ agreement_score }}%</div>
+                </div>
+                <div class="metric-summary-card">
+                    <div class="metric-summary-label">Breadth Split</div>
+                    <div class="metric-summary-value">
+                        <span class="val-positive">{{ market_breadth.positive }} ▲</span>
+                        <span class="val-negative" style="margin-left: 0.5rem;">{{ market_breadth.negative }} ▼</span>
+                    </div>
+                </div>
+                <div class="metric-summary-card">
+                    <div class="metric-summary-label">Avg Return</div>
+                    <div class="metric-summary-value {% if market_breadth.average > 0 %}val-positive{% elif market_breadth.average < 0 %}val-negative{% else %}val-zero{% endif %}">
+                        {{ market_breadth.average }}%
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">Sector Strength (Averages)</div>
+                <div class="sectors-grid">
+                    {% for sector, val in sector_strength.items %}
+                    <div class="sector-card">
+                        <span class="sector-name">{{ sector }}</span>
+                        <span class="sector-val {% if val > 0 %}val-positive{% elif val < 0 %}val-negative{% else %}val-zero{% endif %}">{{ val }}%</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Local Stock Contribution (Feature Impact) -->
+        <div class="panel">
+            <div class="panel-title">Stock Contribution Analysis</div>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <!-- Contributors -->
+                <div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--bullish); margin-bottom: 0.4rem;">Top Positive Contributors</div>
+                    {% if top_contributors %}
+                        <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        {% for item in top_contributors %}
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; background-color: hsla(150, 85%, 43%, 0.05); padding: 0.4rem 0.8rem; border-radius: 4px; border: 1px solid hsla(150, 85%, 43%, 0.15);">
+                                <strong>{{ item.symbol }}</strong>
+                                <span>{{ item.return }}% return &rarr; <span class="val-positive">+{{ item.impact|floatformat:3 }}% impact</span></span>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">No positive contributions.</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Detractors -->
+                <div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--bearish); margin-bottom: 0.4rem;">Top Negative Detractors</div>
+                    {% if top_detractors %}
+                        <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                        {% for item in top_detractors %}
+                            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; background-color: hsla(342, 85%, 55%, 0.05); padding: 0.4rem 0.8rem; border-radius: 4px; border: 1px solid hsla(342, 85%, 55%, 0.15);">
+                                <strong>{{ item.symbol }}</strong>
+                                <span>{{ item.return }}% return &rarr; <span class="val-negative">{{ item.impact|floatformat:3 }}% impact</span></span>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">No negative detractions.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Default State: No prediction run yet -->
+        <div class="panel" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 300px; color: var(--text-secondary);">
+            <div style="font-size: 4rem; color: var(--border-color); margin-bottom: 1rem;">⚡</div>
+            <h3>Ready for Prediction</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); max-width: 320px; margin-top: 0.5rem;">
+                Configure the stock returns on the left panel, then run the model to predict the NQ direction.
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Feature Importance Visualization (Using Chart.js) -->
+        {% if feature_importances %}
+        <div class="panel">
+            <div class="panel-title">Model Insights: Feature Importance</div>
+            <div style="position: relative; height: 320px; width: 100%;">
+                <canvas id="importanceChart"></canvas>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Chart.js configuration script -->
+{% if feature_importances %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const ctx = document.getElementById('importanceChart').getContext('2d');
+        const importanceData = [
+            {% for item in feature_importances %}
+            { feature: "{{ item.feature }}", importance: {{ item.importance }} },
+            {% endfor %}
+        ];
+        
+        // Take top 10 features for display
+        const topData = importanceData.slice(0, 10);
+        
+        const labels = topData.map(d => d.feature.replace('_ret', '').toUpperCase());
+        const values = topData.map(d => d.importance * 100); // convert to %
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Importance Score (%)',
+                    data: values,
+                    backgroundColor: 'hsla(210, 100%, 60%, 0.65)',
+                    borderColor: 'hsl(210, 100%, 60%)',
+                    borderWidth: 1.5,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'hsl(222, 25%, 8%)',
+                        titleColor: '#fff',
+                        bodyColor: '#ccc',
+                        borderColor: 'hsla(223, 20%, 22%, 0.5)',
+                        borderWidth: 1
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'hsla(223, 20%, 22%, 0.2)' },
+                        ticks: { color: 'hsl(218, 12%, 75%)', font: { family: 'Inter' } }
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: 'hsl(210, 20%, 98%)', font: { family: 'Outfit', weight: 'bold' } }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endif %}
+
+<script>
+    // Javascript logic for setting modes and UI toggling
+    function setMode(mode) {
+        document.getElementById('mode-input').value = mode;
+        
+        // Update active class on buttons
+        const buttons = document.querySelectorAll('.mode-btn');
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.innerText.toLowerCase().replace(' ', '') === mode.toLowerCase()) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Toggle input fields
+        const stocks = {{ stocks|safe }};
+        stocks.forEach(symbol => {
+            const div1h = document.getElementById(`div-${symbol}-1h`);
+            const div4h = document.getElementById(`div-${symbol}-4h`);
+            const div1d = document.getElementById(`div-${symbol}-1d`);
+            const divPrevDay = document.getElementById(`div-${symbol}-prev_day`);
+            
+            if (div1h) div1h.style.display = (mode === '1h' || mode === 'general') ? 'flex' : 'none';
+            if (div4h) div4h.style.display = (mode === '4h' || mode === 'general') ? 'flex' : 'none';
+            if (div1d) div1d.style.display = (mode === '1d' || mode === 'general') ? 'flex' : 'none';
+            if (divPrevDay) divPrevDay.style.display = (mode === 'general') ? 'flex' : 'none';
+        });
+    }
+</script>
+{% endblock %}

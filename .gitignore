@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Databases
+db.sqlite3
+db.sqlite3-journal
+
+# Logs and OS
+*.log
+.DS_Store
+Thumbs.db
+
+# Data
+data/
