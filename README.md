@@ -8,7 +8,7 @@ Built with **Django + XGBoost** and deployed free on Render.
 
 ## 🚀 Live Demo
 
-> Deploy your own free instance on [Render.com](https://render.com) — see deployment section below.
+> Deploy your own free instance on [Site Link](https://nq-1aoy.onrender.com/) — see deployment section below.
 
 ---
 
