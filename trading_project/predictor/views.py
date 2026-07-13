@@ -13,9 +13,12 @@ WEIGHTS = {
     'AVGO': 0.10, 'TSLA': 0.07, 'COST': 0.04, 'GOOGL': 0.05, 'GOOG': 0.05
 }
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_DIR = os.path.dirname(BASE_DIR)
-MODELS_DIR = os.path.join(PROJECT_DIR, 'models')
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent   # trading_project/predictor → trading_project
+REPO_ROOT = BASE_DIR.parent                          # trading_project → repo root
+MODELS_DIR = str(REPO_ROOT / 'models')              # repo_root/models
+
 
 # Cache for models and metadata to avoid reloading on every request
 _models = {}
