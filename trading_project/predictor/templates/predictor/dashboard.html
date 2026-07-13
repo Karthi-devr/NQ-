@@ -92,7 +92,25 @@
             {% endfor %}
         </div>
 
-        <!-- Class Probabilities Meter -->
+        <!-- ── Save This Day Button ─────────────────────────────────── -->
+        <form method="POST" action="{% url 'save_prediction' %}" style="margin-bottom: 0.5rem;">
+            {% csrf_token %}
+            <input type="hidden" name="mode"        value="{{ selected_mode }}">
+            <input type="hidden" name="prediction"  value="{{ prediction }}">
+            <input type="hidden" name="confidence"  value="{% for c, p in probabilities.items %}{% if c == prediction %}{{ p }}{% endif %}{% endfor %}">
+            <input type="hidden" name="trade_date"  value="{% now 'Y-m-d' %}">
+            {% for s in stock_data %}
+            <input type="hidden" name="{{ s.symbol }}_1h"          value="{{ s.val_1h }}">
+            <input type="hidden" name="{{ s.symbol }}_4h"          value="{{ s.val_4h }}">
+            <input type="hidden" name="{{ s.symbol }}_1d"          value="{{ s.val_1d }}">
+            <input type="hidden" name="{{ s.symbol }}_prev_day_ret" value="{{ s.val_prev_day }}">
+            {% endfor %}
+            <button type="submit" style="width:100%; margin-top:0.6rem; padding:0.7rem; background: hsla(265,80%,60%,0.15); border: 1px solid hsla(265,80%,60%,0.4); color: hsl(265,80%,80%); border-radius: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background 0.2s;">
+                📚 Save This Day for Retraining
+            </button>
+        </form>
+
+
         <div class="panel">
             <div class="panel-title">Probability Breakdown</div>
             <div class="probability-bars">

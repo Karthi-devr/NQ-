@@ -1,0 +1,190 @@
+{% extends 'predictor/base.html' %}
+
+{% block content %}
+<style>
+    .td-page { max-width: 1100px; margin: 2rem auto; padding: 0 1.5rem; }
+    .td-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+    .td-title { font-size: 1.6rem; font-weight: 700; color: var(--text-primary); }
+    .td-subtitle { font-size: 0.9rem; color: var(--text-muted); margin-top: 0.3rem; }
+
+    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.2rem; text-align: center; }
+    .stat-num  { font-size: 2rem; font-weight: 800; font-family: 'Outfit', sans-serif; }
+    .stat-label{ font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .retrain-panel { background: linear-gradient(135deg, hsla(265,80%,55%,0.12), hsla(200,90%,50%,0.08)); border: 1px solid hsla(265,80%,55%,0.3); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+    .retrain-info { flex: 1; }
+    .retrain-title { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.4rem; }
+    .retrain-desc  { font-size: 0.85rem; color: var(--text-muted); }
+    .retrain-locked { font-size: 0.85rem; color: var(--bearish); margin-top: 0.3rem; }
+
+    .btn-retrain { background: linear-gradient(135deg, hsl(265,80%,60%), hsl(200,90%,55%)); color: white; border: none; padding: 0.8rem 2rem; border-radius: 8px; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; white-space: nowrap; }
+    .btn-retrain:hover { opacity: 0.85; }
+    .btn-retrain:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; opacity: 0.6; }
+
+    .messages-area { margin-bottom: 1.5rem; }
+    .msg { padding: 0.8rem 1.2rem; border-radius: 8px; font-size: 0.9rem; margin-bottom: 0.6rem; }
+    .msg-success { background: hsla(150,80%,40%,0.12); border: 1px solid hsla(150,80%,40%,0.3); color: var(--bullish); }
+    .msg-warning { background: hsla(40,90%,55%,0.12); border: 1px solid hsla(40,90%,55%,0.3); color: hsl(40,90%,65%); }
+    .msg-error   { background: hsla(0,80%,55%,0.12); border: 1px solid hsla(0,80%,55%,0.3); color: var(--bearish); }
+
+    .days-table-wrap { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; }
+    .days-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    .days-table th { background: var(--header-bg, #0f1117); color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.06em; padding: 1rem 1.2rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+    .days-table td { padding: 0.85rem 1.2rem; border-bottom: 1px solid hsla(220,20%,30%,0.3); color: var(--text-primary); vertical-align: middle; }
+    .days-table tr:last-child td { border-bottom: none; }
+    .days-table tr:hover td { background: hsla(220,20%,30%,0.15); }
+
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .badge-bullish  { background: hsla(150,80%,40%,0.15); color: var(--bullish); border: 1px solid hsla(150,80%,40%,0.3); }
+    .badge-bearish  { background: hsla(0,80%,55%,0.15); color: var(--bearish); border: 1px solid hsla(0,80%,55%,0.3); }
+    .badge-neutral  { background: hsla(220,30%,50%,0.15); color: var(--text-secondary); border: 1px solid hsla(220,30%,50%,0.3); }
+    .badge-pending  { background: hsla(40,90%,55%,0.12); color: hsl(40,90%,65%); border: 1px solid hsla(40,90%,55%,0.3); }
+    .badge-correct  { background: hsla(150,80%,40%,0.1); color: var(--bullish); }
+    .badge-wrong    { background: hsla(0,80%,55%,0.1); color: var(--bearish); }
+
+    .outcome-form { display: flex; gap: 0.4rem; align-items: center; }
+    .outcome-select { background: var(--input-bg, #1a1e2e); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.82rem; }
+    .btn-save-outcome { background: var(--accent); color: white; border: none; padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 600; }
+    .btn-save-outcome:hover { opacity: 0.85; }
+
+    .empty-state { text-align: center; padding: 3rem; color: var(--text-muted); }
+    .empty-icon  { font-size: 3rem; margin-bottom: 1rem; }
+
+    .progress-bar-wrap { background: var(--border-color); border-radius: 20px; height: 8px; margin-top: 0.5rem; overflow: hidden; }
+    .progress-bar-fill { height: 100%; border-radius: 20px; background: linear-gradient(90deg, hsl(265,80%,60%), hsl(200,90%,55%)); transition: width 0.5s ease; }
+
+    @media (max-width: 700px) {
+        .stats-row { grid-template-columns: repeat(2, 1fr); }
+        .days-table th:nth-child(3),
+        .days-table td:nth-child(3) { display: none; }
+    }
+</style>
+
+<div class="td-page">
+
+    <div class="td-header">
+        <div>
+            <div class="td-title">📚 Real Training Data</div>
+            <div class="td-subtitle">Save daily predictions → enter real outcomes → retrain models on YOUR data</div>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages-area">
+        {% for msg in messages %}
+        <div class="msg {% if msg.tags == 'success' %}msg-success{% elif msg.tags == 'warning' %}msg-warning{% else %}msg-error{% endif %}">
+            {{ msg }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-num" style="color: var(--accent);">{{ total }}</div>
+            <div class="stat-label">Total Days Saved</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" style="color: var(--bullish);">{{ complete }}</div>
+            <div class="stat-label">Complete (with outcome)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" style="color: {% if accuracy >= 60 %}var(--bullish){% elif accuracy >= 45 %}hsl(40,90%,65%){% else %}var(--bearish){% endif %};">{{ accuracy }}%</div>
+            <div class="stat-label">Model Hit Rate</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-num" style="color: hsl(265,80%,70%);">{{ min_days }}</div>
+            <div class="stat-label">Days Needed to Retrain</div>
+        </div>
+    </div>
+
+    <!-- Retrain Panel -->
+    <div class="retrain-panel">
+        <div class="retrain-info">
+            <div class="retrain-title">🧠 Retrain Model on Real Data</div>
+            <div class="retrain-desc">When you have {{ min_days }}+ complete days, click Retrain to replace the synthetic model with one trained on YOUR real market observations.</div>
+            {% if not can_retrain %}
+            <div class="retrain-locked">⏳ Need {{ min_days|add:"-"|add:complete|stringformat:"s" }} more days — currently {{ complete }}/{{ min_days }} complete.</div>
+            <div class="progress-bar-wrap" style="max-width: 300px; margin-top: 0.5rem;">
+                <div class="progress-bar-fill" style="width: {% widthratio complete min_days 100 %}%;"></div>
+            </div>
+            {% endif %}
+        </div>
+        <form method="POST" action="{% url 'retrain_model' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-retrain" {% if not can_retrain %}disabled{% endif %}>
+                🔄 Retrain Model
+            </button>
+        </form>
+    </div>
+
+    <!-- Days Table -->
+    <div class="days-table-wrap">
+        {% if days %}
+        <table class="days-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Mode</th>
+                    <th>Model Said</th>
+                    <th>Confidence</th>
+                    <th>Actual NQ Outcome</th>
+                    <th>Correct?</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for day in days %}
+                <tr>
+                    <td>{{ day.date }}</td>
+                    <td><span class="badge badge-neutral">{{ day.mode|upper }}</span></td>
+                    <td>
+                        <span class="badge {% if day.model_prediction == 'Bullish' %}badge-bullish{% elif day.model_prediction == 'Bearish' %}badge-bearish{% else %}badge-neutral{% endif %}">
+                            {{ day.model_prediction|default:"—" }}
+                        </span>
+                    </td>
+                    <td>{{ day.model_confidence|floatformat:1 }}%</td>
+                    <td>
+                        {% if day.actual_outcome %}
+                            <span class="badge {% if day.actual_outcome == 'Bullish' %}badge-bullish{% elif day.actual_outcome == 'Bearish' %}badge-bearish{% else %}badge-neutral{% endif %}">
+                                {{ day.actual_outcome }}
+                            </span>
+                        {% else %}
+                            <form method="POST" action="{% url 'update_outcome' day.id %}" class="outcome-form">
+                                {% csrf_token %}
+                                <select name="actual_outcome" class="outcome-select">
+                                    <option value="">— Select —</option>
+                                    <option value="Bullish">Bullish ▲</option>
+                                    <option value="Neutral">Neutral ↔</option>
+                                    <option value="Bearish">Bearish ▼</option>
+                                </select>
+                                <button type="submit" class="btn-save-outcome">Save</button>
+                            </form>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if day.was_correct == True %}
+                            <span class="badge badge-correct">✅ Yes</span>
+                        {% elif day.was_correct == False %}
+                            <span class="badge badge-wrong">❌ No</span>
+                        {% else %}
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">Pending</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <div style="font-size: 1rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem;">No data saved yet</div>
+            <div style="font-size: 0.85rem;">Go to the Dashboard, run a prediction, then click <strong>"Save This Day"</strong> to start collecting real training data.</div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}
