@@ -21,3 +21,6 @@ Thumbs.db
 
 # Data
 data/
+
+# Collected static files (regenerated on Render during build)
+staticfiles/
