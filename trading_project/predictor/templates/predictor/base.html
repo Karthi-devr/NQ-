@@ -16,6 +16,79 @@
     
     <!-- Chart.js CDN for Visualizing Feature Importance -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ── Floating Clock Widget ─────────────────────────────────── */
+        #market-clock {
+            position: fixed;
+            bottom: 1.2rem;
+            right: 1.2rem;
+            z-index: 9999;
+            background: linear-gradient(135deg, hsla(220,30%,12%,0.96), hsla(220,25%,8%,0.98));
+            border: 1px solid hsla(220,30%,35%,0.5);
+            border-radius: 14px;
+            padding: 0.7rem 1.1rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px hsla(0,0%,0%,0.4), 0 0 0 1px hsla(255,80%,60%,0.08);
+            font-family: 'Outfit', monospace;
+            min-width: 160px;
+            cursor: default;
+            transition: transform 0.2s, box-shadow 0.2s;
+            user-select: none;
+        }
+        #market-clock:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px hsla(0,0%,0%,0.5), 0 0 0 1px hsla(255,80%,60%,0.18);
+        }
+        .clock-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .clock-zone {
+            text-align: center;
+        }
+        .clock-label {
+            font-size: 0.58rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: hsla(220,20%,60%,0.9);
+            margin-bottom: 0.15rem;
+        }
+        .clock-time {
+            font-size: 1.05rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            line-height: 1;
+        }
+        .clock-time.ist { color: hsl(200, 90%, 65%); }
+        .clock-time.est { color: hsl(150, 80%, 55%); }
+        .clock-divider {
+            width: 1px;
+            height: 32px;
+            background: hsla(220,20%,40%,0.5);
+            flex-shrink: 0;
+        }
+        .market-status {
+            text-align: center;
+            margin-top: 0.4rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            padding: 0.15rem 0.5rem;
+            border-radius: 20px;
+        }
+        .market-open   { background: hsla(150,80%,40%,0.15); color: hsl(150,80%,55%); border: 1px solid hsla(150,80%,40%,0.3); }
+        .market-closed { background: hsla(0,70%,50%,0.12); color: hsl(0,70%,65%); border: 1px solid hsla(0,70%,50%,0.25); }
+        .market-pre    { background: hsla(40,90%,55%,0.12); color: hsl(40,90%,65%); border: 1px solid hsla(40,90%,55%,0.3); }
+
+        @media (max-width: 480px) {
+            #market-clock { bottom: 0.6rem; right: 0.6rem; padding: 0.5rem 0.8rem; min-width: 140px; }
+            .clock-time { font-size: 0.9rem; }
+        }
+    </style>
 </head>
 <body>
     <header class="app-header">
@@ -46,6 +119,64 @@
             <p class="footer-note">Disclaimer: Educational project. Not financial advice.</p>
         </div>
     </footer>
+
+    <!-- ── Floating IST / EST Clock ──────────────────────────────── -->
+    <div id="market-clock">
+        <div class="clock-row">
+            <div class="clock-zone">
+                <div class="clock-label">IST</div>
+                <div class="clock-time ist" id="clock-ist">--:--:--</div>
+            </div>
+            <div class="clock-divider"></div>
+            <div class="clock-zone">
+                <div class="clock-label">EST</div>
+                <div class="clock-time est" id="clock-est">--:--:--</div>
+            </div>
+        </div>
+        <div id="market-status" class="market-status market-closed">● Market Closed</div>
+    </div>
+
+    <script>
+        function updateClock() {
+            const now = new Date();
+
+            // IST = UTC+5:30
+            const ist = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
+            // EST/EDT (US/Eastern — auto handles DST)
+            const est = new Date(now.toLocaleString('en-US', { timeZone: 'America/New_York' }));
+
+            const fmt = d => d.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            document.getElementById('clock-ist').textContent = fmt(ist);
+            document.getElementById('clock-est').textContent = fmt(est);
+
+            // Market session check (EST)
+            const h = est.getHours();
+            const m = est.getMinutes();
+            const totalMin = h * 60 + m;
+            const day = est.getDay(); // 0=Sun, 6=Sat
+            const statusEl = document.getElementById('market-status');
+
+            if (day === 0 || day === 6) {
+                statusEl.textContent = '● Weekend Closed';
+                statusEl.className = 'market-status market-closed';
+            } else if (totalMin >= 570 && totalMin < 960) {   // 9:30 AM – 4:00 PM
+                statusEl.textContent = '● Market Open';
+                statusEl.className = 'market-status market-open';
+            } else if (totalMin >= 240 && totalMin < 570) {   // 4:00 AM – 9:30 AM
+                statusEl.textContent = '◑ Pre-Market';
+                statusEl.className = 'market-status market-pre';
+            } else if (totalMin >= 960 && totalMin < 1200) {  // 4:00 PM – 8:00 PM
+                statusEl.textContent = '◑ After-Hours';
+                statusEl.className = 'market-status market-pre';
+            } else {
+                statusEl.textContent = '● Market Closed';
+                statusEl.className = 'market-status market-closed';
+            }
+        }
+
+        updateClock();
+        setInterval(updateClock, 1000);
+    </script>
 
     <!-- Custom JS -->
     <script src="{% static 'js/main.js' %}"></script>

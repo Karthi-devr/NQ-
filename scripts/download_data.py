@@ -4,10 +4,10 @@ import pandas as pd
 from datetime import datetime, timedelta
 
 # Define configuration
-STOCKS = ["MSFT", "AAPL", "NVDA", "AMZN", "META", "AVGO", "TSLA", "COST", "GOOGL", "GOOG"]
+STOCKS = ["MSFT", "NVDA", "AAPL", "AMZN", "META", "AVGO", "GOOGL", "TSLA", "COST", "AMD"]
 WEIGHTS = {
-    'MSFT': 0.17, 'AAPL': 0.17, 'NVDA': 0.16, 'AMZN': 0.10, 'META': 0.09,
-    'AVGO': 0.10, 'TSLA': 0.07, 'COST': 0.04, 'GOOGL': 0.05, 'GOOG': 0.05
+    'MSFT': 0.16, 'NVDA': 0.15, 'AAPL': 0.14, 'AMZN': 0.09, 'META': 0.08,
+    'AVGO': 0.08, 'GOOGL': 0.05, 'TSLA': 0.04, 'COST': 0.03, 'AMD': 0.03
 }
 DATA_DIR = "data"
 
@@ -32,8 +32,8 @@ def main():
     
     # 1. Initialize stock prices and base paths
     prices = {
-        'MSFT': 300.0, 'AAPL': 150.0, 'NVDA': 100.0, 'AMZN': 120.0, 'META': 250.0,
-        'AVGO': 400.0, 'TSLA': 200.0, 'COST': 500.0, 'GOOGL': 100.0, 'GOOG': 100.0
+        'MSFT': 300.0, 'NVDA': 200.0, 'AAPL': 150.0, 'AMZN': 120.0, 'META': 250.0,
+        'AVGO': 400.0, 'GOOGL': 100.0, 'TSLA': 200.0, 'COST': 500.0, 'AMD': 90.0
     }
     
     # Initialize daily storage dataframes

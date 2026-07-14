@@ -129,11 +129,11 @@ def engineer_features(df_master):
         df_eng[f'market_weighted_avg_{tf}_ret'] = sum(weighted_rets)
         
         # Level 3: Sector Strength
-        df_eng[f'sector_tech_{tf}_ret'] = df_eng[[f'MSFT_{tf}_ret', f'AAPL_{tf}_ret', f'AVGO_{tf}_ret']].mean(axis=1)
-        df_eng[f'sector_comm_{tf}_ret'] = df_eng[[f'META_{tf}_ret', f'GOOGL_{tf}_ret', f'GOOG_{tf}_ret']].mean(axis=1)
+        df_eng[f'sector_tech_{tf}_ret'] = df_eng[[f'MSFT_{tf}_ret', f'AAPL_{tf}_ret']].mean(axis=1)
+        df_eng[f'sector_comm_{tf}_ret'] = df_eng[[f'META_{tf}_ret', f'GOOGL_{tf}_ret']].mean(axis=1)
         df_eng[f'sector_disc_{tf}_ret'] = df_eng[[f'AMZN_{tf}_ret', f'TSLA_{tf}_ret']].mean(axis=1)
         df_eng[f'sector_staples_{tf}_ret'] = df_eng[f'COST_{tf}_ret']
-        df_eng[f'sector_semi_{tf}_ret'] = df_eng[[f'NVDA_{tf}_ret', f'AVGO_{tf}_ret']].mean(axis=1)
+        df_eng[f'sector_semi_{tf}_ret'] = df_eng[[f'NVDA_{tf}_ret', f'AVGO_{tf}_ret', f'AMD_{tf}_ret']].mean(axis=1)
         
         # Level 4: Market Breadth
         ret_cols = [f'{symbol}_{tf}_ret' for symbol in WEIGHTS.keys()]
