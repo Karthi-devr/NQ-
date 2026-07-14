@@ -1,557 +1,557 @@
 {
     "1h": {
-        "train_accuracy": 0.7158948685857321,
-        "test_accuracy": 0.565,
-        "precision_macro": 0.5702858704739855,
-        "recall_macro": 0.5687423628529166,
-        "f1_macro": 0.5694444444444444,
+        "train_accuracy": 0.6470588235294118,
+        "test_accuracy": 0.615,
+        "precision_macro": 0.6339894565176167,
+        "recall_macro": 0.6118108002694749,
+        "f1_macro": 0.6180899920661906,
         "classification_report": {
             "Bearish": {
-                "precision": 0.625,
-                "recall": 0.625,
-                "f1-score": 0.625,
-                "support": 56.0
+                "precision": 0.5882352941176471,
+                "recall": 0.5882352941176471,
+                "f1-score": 0.5882352941176471,
+                "support": 51.0
             },
             "Neutral": {
-                "precision": 0.4520547945205479,
-                "recall": 0.4647887323943662,
-                "f1-score": 0.4583333333333333,
-                "support": 71.0
+                "precision": 0.5319148936170213,
+                "recall": 0.6329113924050633,
+                "f1-score": 0.5780346820809249,
+                "support": 79.0
             },
             "Bullish": {
-                "precision": 0.6338028169014085,
-                "recall": 0.6164383561643836,
-                "f1-score": 0.625,
-                "support": 73.0
+                "precision": 0.7818181818181819,
+                "recall": 0.6142857142857143,
+                "f1-score": 0.688,
+                "support": 70.0
             },
-            "accuracy": 0.565,
+            "accuracy": 0.615,
             "macro avg": {
-                "precision": 0.5702858704739855,
-                "recall": 0.5687423628529166,
-                "f1-score": 0.5694444444444444,
+                "precision": 0.6339894565176167,
+                "recall": 0.6118108002694749,
+                "f1-score": 0.6180899920661906,
                 "support": 200.0
             },
             "weighted avg": {
-                "precision": 0.5668174802238086,
-                "recall": 0.565,
-                "f1-score": 0.5658333333333333,
+                "precision": 0.6337427466150871,
+                "recall": 0.615,
+                "f1-score": 0.6191236994219653,
                 "support": 200.0
             }
         },
         "confusion_matrix": [
             [
-                35,
-                16,
-                5
+                30,
+                20,
+                1
             ],
             [
-                17,
-                33,
-                21
+                18,
+                50,
+                11
             ],
             [
-                4,
+                3,
                 24,
-                45
+                43
             ]
         ],
         "feature_importances": [
             {
-                "feature": "breadth_avg_ret_1h",
-                "importance": 0.09666100144386292
+                "feature": "breadth_neg_count_1h",
+                "importance": 0.14808706939220428
             },
             {
                 "feature": "breadth_pos_count_1h",
-                "importance": 0.09313448518514633
-            },
-            {
-                "feature": "market_weighted_avg_1h_ret",
-                "importance": 0.09301013499498367
+                "importance": 0.13461343944072723
             },
             {
                 "feature": "breadth_median_ret_1h",
-                "importance": 0.08561297506093979
+                "importance": 0.0817786231637001
             },
             {
-                "feature": "breadth_max_ret_1h",
-                "importance": 0.06685177236795425
+                "feature": "market_weighted_avg_1h_ret",
+                "importance": 0.07381751388311386
             },
             {
-                "feature": "breadth_neg_count_1h",
-                "importance": 0.04397934675216675
-            },
-            {
-                "feature": "sector_comm_1h_ret",
-                "importance": 0.0433783158659935
-            },
-            {
-                "feature": "agreement_score_1h",
-                "importance": 0.03821251913905144
-            },
-            {
-                "feature": "META_weighted_1h_ret",
-                "importance": 0.03290480375289917
-            },
-            {
-                "feature": "sector_tech_1h_ret",
-                "importance": 0.029382744804024696
-            },
-            {
-                "feature": "AAPL_weighted_1h_ret",
-                "importance": 0.02486463077366352
+                "feature": "breadth_avg_ret_1h",
+                "importance": 0.04849031940102577
             },
             {
                 "feature": "sector_semi_1h_ret",
-                "importance": 0.023648515343666077
+                "importance": 0.041067205369472504
             },
             {
-                "feature": "breadth_min_ret_1h",
-                "importance": 0.02205808460712433
+                "feature": "breadth_max_ret_1h",
+                "importance": 0.037226710468530655
             },
             {
                 "feature": "NVDA_weighted_1h_ret",
-                "importance": 0.02022479474544525
+                "importance": 0.03165602311491966
             },
             {
-                "feature": "AAPL_1h_ret",
-                "importance": 0.019953129813075066
-            },
-            {
-                "feature": "TSLA_weighted_1h_ret",
-                "importance": 0.019810831174254417
-            },
-            {
-                "feature": "GOOG_1h_ret",
-                "importance": 0.01840786449611187
-            },
-            {
-                "feature": "META_1h_ret",
-                "importance": 0.018291234970092773
-            },
-            {
-                "feature": "sector_disc_1h_ret",
-                "importance": 0.01825568825006485
+                "feature": "agreement_score_1h",
+                "importance": 0.02750181220471859
             },
             {
                 "feature": "NVDA_1h_ret",
-                "importance": 0.017886409536004066
+                "importance": 0.027097994461655617
+            },
+            {
+                "feature": "breadth_min_ret_1h",
+                "importance": 0.026797842234373093
+            },
+            {
+                "feature": "META_weighted_1h_ret",
+                "importance": 0.02602638117969036
+            },
+            {
+                "feature": "sector_disc_1h_ret",
+                "importance": 0.02206101454794407
+            },
+            {
+                "feature": "sector_comm_1h_ret",
+                "importance": 0.021050089970231056
+            },
+            {
+                "feature": "sector_tech_1h_ret",
+                "importance": 0.020800376310944557
+            },
+            {
+                "feature": "META_1h_ret",
+                "importance": 0.020571600645780563
+            },
+            {
+                "feature": "AAPL_weighted_1h_ret",
+                "importance": 0.01788651943206787
+            },
+            {
+                "feature": "AMD_1h_ret",
+                "importance": 0.017542840912938118
+            },
+            {
+                "feature": "AAPL_1h_ret",
+                "importance": 0.016529178246855736
+            },
+            {
+                "feature": "GOOGL_1h_ret",
+                "importance": 0.015197581611573696
             }
         ]
     },
     "4h": {
-        "train_accuracy": 0.6520650813516896,
-        "test_accuracy": 0.54,
-        "precision_macro": 0.5670748581707485,
-        "recall_macro": 0.5340789026395818,
-        "f1_macro": 0.5426985228212255,
+        "train_accuracy": 0.5644555694618273,
+        "test_accuracy": 0.57,
+        "precision_macro": 0.7701525054466232,
+        "recall_macro": 0.522769445330875,
+        "f1_macro": 0.5167289301180208,
         "classification_report": {
             "Bearish": {
-                "precision": 0.6666666666666666,
-                "recall": 0.4642857142857143,
-                "f1-score": 0.5473684210526316,
-                "support": 56.0
+                "precision": 1.0,
+                "recall": 0.21568627450980393,
+                "f1-score": 0.3548387096774194,
+                "support": 51.0
             },
             "Neutral": {
-                "precision": 0.4318181818181818,
-                "recall": 0.5352112676056338,
-                "f1-score": 0.4779874213836478,
-                "support": 71.0
+                "precision": 0.477124183006536,
+                "recall": 0.9240506329113924,
+                "f1-score": 0.6293103448275862,
+                "support": 79.0
             },
             "Bullish": {
-                "precision": 0.6027397260273972,
-                "recall": 0.6027397260273972,
-                "f1-score": 0.6027397260273972,
-                "support": 73.0
+                "precision": 0.8333333333333334,
+                "recall": 0.42857142857142855,
+                "f1-score": 0.5660377358490566,
+                "support": 70.0
             },
-            "accuracy": 0.54,
+            "accuracy": 0.57,
             "macro avg": {
-                "precision": 0.5670748581707485,
-                "recall": 0.5340789026395818,
-                "f1-score": 0.5426985228212255,
+                "precision": 0.7701525054466232,
+                "recall": 0.522769445330875,
+                "f1-score": 0.5167289301180208,
                 "support": 200.0
             },
             "weighted avg": {
-                "precision": 0.5599621212121212,
-                "recall": 0.54,
-                "f1-score": 0.5429486924859319,
+                "precision": 0.7351307189542484,
+                "recall": 0.57,
+                "f1-score": 0.5371746647218083,
                 "support": 200.0
             }
         },
         "confusion_matrix": [
             [
-                26,
-                25,
-                5
+                11,
+                40,
+                0
             ],
             [
-                9,
-                38,
-                24
+                0,
+                73,
+                6
             ],
             [
-                4,
-                25,
-                44
+                0,
+                40,
+                30
             ]
         ],
         "feature_importances": [
             {
+                "feature": "breadth_min_ret_4h",
+                "importance": 0.12512589991092682
+            },
+            {
                 "feature": "market_weighted_avg_4h_ret",
-                "importance": 0.1252351850271225
+                "importance": 0.1238207146525383
             },
             {
                 "feature": "breadth_median_ret_4h",
-                "importance": 0.09836246818304062
+                "importance": 0.09999670088291168
             },
             {
                 "feature": "breadth_avg_ret_4h",
-                "importance": 0.07680483907461166
-            },
-            {
-                "feature": "sector_comm_4h_ret",
-                "importance": 0.061654385179281235
-            },
-            {
-                "feature": "breadth_min_ret_4h",
-                "importance": 0.05318129062652588
-            },
-            {
-                "feature": "breadth_pos_count_4h",
-                "importance": 0.052838560193777084
+                "importance": 0.09849006682634354
             },
             {
                 "feature": "breadth_max_ret_4h",
-                "importance": 0.046779267489910126
+                "importance": 0.05403035134077072
             },
             {
-                "feature": "breadth_neg_count_4h",
-                "importance": 0.041791148483753204
-            },
-            {
-                "feature": "sector_semi_4h_ret",
-                "importance": 0.02980017475783825
-            },
-            {
-                "feature": "sector_tech_4h_ret",
-                "importance": 0.025898266583681107
-            },
-            {
-                "feature": "TSLA_4h_ret",
-                "importance": 0.025059107691049576
-            },
-            {
-                "feature": "agreement_score_4h",
-                "importance": 0.02459077723324299
-            },
-            {
-                "feature": "AAPL_weighted_4h_ret",
-                "importance": 0.02368396520614624
+                "feature": "breadth_pos_count_4h",
+                "importance": 0.0499759316444397
             },
             {
                 "feature": "TSLA_weighted_4h_ret",
-                "importance": 0.022744562476873398
+                "importance": 0.04868868365883827
             },
             {
-                "feature": "GOOG_4h_ret",
-                "importance": 0.022048773244023323
+                "feature": "sector_tech_4h_ret",
+                "importance": 0.03731190040707588
             },
             {
-                "feature": "GOOG_weighted_4h_ret",
-                "importance": 0.021847371011972427
+                "feature": "MSFT_4h_ret",
+                "importance": 0.03395352140069008
             },
             {
-                "feature": "NVDA_4h_ret",
-                "importance": 0.019064344465732574
+                "feature": "GOOGL_weighted_4h_ret",
+                "importance": 0.029288271442055702
+            },
+            {
+                "feature": "agreement_score_4h",
+                "importance": 0.028741303831338882
+            },
+            {
+                "feature": "sector_disc_4h_ret",
+                "importance": 0.02715899981558323
+            },
+            {
+                "feature": "NVDA_weighted_4h_ret",
+                "importance": 0.02678331546485424
             },
             {
                 "feature": "GOOGL_4h_ret",
-                "importance": 0.017647001892328262
+                "importance": 0.024811826646327972
+            },
+            {
+                "feature": "sector_comm_4h_ret",
+                "importance": 0.024080678820610046
+            },
+            {
+                "feature": "sector_semi_4h_ret",
+                "importance": 0.022077614441514015
+            },
+            {
+                "feature": "AMD_weighted_4h_ret",
+                "importance": 0.01703605055809021
+            },
+            {
+                "feature": "AMD_4h_ret",
+                "importance": 0.01686471700668335
             },
             {
                 "feature": "AAPL_4h_ret",
-                "importance": 0.017215436324477196
+                "importance": 0.015228359960019588
             },
             {
-                "feature": "COST_weighted_4h_ret",
-                "importance": 0.0171809159219265
+                "feature": "AVGO_4h_ret",
+                "importance": 0.015054461546242237
             }
         ]
     },
     "1d": {
-        "train_accuracy": 0.685857321652065,
-        "test_accuracy": 0.51,
-        "precision_macro": 0.5805555555555556,
-        "recall_macro": 0.5025518407247135,
-        "f1_macro": 0.5084952331501594,
+        "train_accuracy": 0.6871088861076345,
+        "test_accuracy": 0.54,
+        "precision_macro": 0.6167710944026733,
+        "recall_macro": 0.5131262631634933,
+        "f1_macro": 0.5214276289747989,
         "classification_report": {
             "Bearish": {
-                "precision": 0.6875,
-                "recall": 0.39285714285714285,
-                "f1-score": 0.5,
-                "support": 56.0
+                "precision": 0.6666666666666666,
+                "recall": 0.35294117647058826,
+                "f1-score": 0.46153846153846156,
+                "support": 51.0
             },
             "Neutral": {
-                "precision": 0.4083333333333333,
-                "recall": 0.6901408450704225,
-                "f1-score": 0.5130890052356021,
-                "support": 71.0
+                "precision": 0.45864661654135336,
+                "recall": 0.7721518987341772,
+                "f1-score": 0.5754716981132075,
+                "support": 79.0
             },
             "Bullish": {
-                "precision": 0.6458333333333334,
-                "recall": 0.4246575342465753,
-                "f1-score": 0.512396694214876,
-                "support": 73.0
+                "precision": 0.725,
+                "recall": 0.4142857142857143,
+                "f1-score": 0.5272727272727272,
+                "support": 70.0
             },
-            "accuracy": 0.51,
+            "accuracy": 0.54,
             "macro avg": {
-                "precision": 0.5805555555555556,
-                "recall": 0.5025518407247135,
-                "f1-score": 0.5084952331501594,
+                "precision": 0.6167710944026733,
+                "recall": 0.5131262631634933,
+                "f1-score": 0.5214276289747989,
                 "support": 200.0
             },
             "weighted avg": {
-                "precision": 0.5731875000000001,
-                "recall": 0.51,
-                "f1-score": 0.5091713902470686,
+                "precision": 0.6049154135338345,
+                "recall": 0.54,
+                "f1-score": 0.5295490829924792,
                 "support": 200.0
             }
         },
         "confusion_matrix": [
             [
-                22,
-                30,
-                4
+                18,
+                32,
+                1
             ],
             [
-                9,
-                49,
-                13
+                8,
+                61,
+                10
             ],
             [
                 1,
-                41,
-                31
+                40,
+                29
             ]
         ],
         "feature_importances": [
             {
-                "feature": "breadth_median_ret_1d",
-                "importance": 0.11813268810510635
-            },
-            {
-                "feature": "breadth_pos_count_1d",
-                "importance": 0.08031375706195831
-            },
-            {
-                "feature": "breadth_neg_count_1d",
-                "importance": 0.07539888471364975
-            },
-            {
                 "feature": "breadth_avg_ret_1d",
-                "importance": 0.05950425937771797
+                "importance": 0.08507736772298813
             },
             {
-                "feature": "breadth_max_ret_1d",
-                "importance": 0.052826084196567535
-            },
-            {
-                "feature": "breadth_min_ret_1d",
-                "importance": 0.04849853739142418
-            },
-            {
-                "feature": "sector_tech_1d_ret",
-                "importance": 0.045522913336753845
-            },
-            {
-                "feature": "market_weighted_avg_1d_ret",
-                "importance": 0.03949282690882683
-            },
-            {
-                "feature": "agreement_score_1d",
-                "importance": 0.039021480828523636
+                "feature": "breadth_median_ret_1d",
+                "importance": 0.08076897263526917
             },
             {
                 "feature": "sector_semi_1d_ret",
-                "importance": 0.03242916986346245
+                "importance": 0.06336859613656998
+            },
+            {
+                "feature": "market_weighted_avg_1d_ret",
+                "importance": 0.06201551854610443
+            },
+            {
+                "feature": "breadth_neg_count_1d",
+                "importance": 0.05038412660360336
+            },
+            {
+                "feature": "agreement_score_1d",
+                "importance": 0.04886360839009285
+            },
+            {
+                "feature": "breadth_min_ret_1d",
+                "importance": 0.045262135565280914
+            },
+            {
+                "feature": "AAPL_weighted_1d_ret",
+                "importance": 0.03963729366660118
+            },
+            {
+                "feature": "breadth_pos_count_1d",
+                "importance": 0.03893820196390152
+            },
+            {
+                "feature": "breadth_max_ret_1d",
+                "importance": 0.028853703290224075
             },
             {
                 "feature": "GOOGL_weighted_1d_ret",
-                "importance": 0.025114387273788452
+                "importance": 0.026030736044049263
             },
             {
-                "feature": "sector_comm_1d_ret",
-                "importance": 0.024650458246469498
+                "feature": "COST_1d_ret",
+                "importance": 0.019621198996901512
             },
             {
-                "feature": "sector_disc_1d_ret",
-                "importance": 0.0199485681951046
-            },
-            {
-                "feature": "TSLA_1d_ret",
-                "importance": 0.01710241474211216
+                "feature": "AMD_weighted_1d_ret",
+                "importance": 0.019559619948267937
             },
             {
                 "feature": "GOOGL_1d_ret",
-                "importance": 0.017096934840083122
+                "importance": 0.01949918456375599
             },
             {
-                "feature": "TSLA_weighted_1d_ret",
-                "importance": 0.014902233146131039
+                "feature": "AAPL_1d_ret",
+                "importance": 0.017915576696395874
             },
             {
-                "feature": "AMZN_weighted_1d_ret",
-                "importance": 0.014163774438202381
+                "feature": "sector_comm_1d_ret",
+                "importance": 0.01788395829498768
             },
             {
-                "feature": "META_prev_day_ret",
-                "importance": 0.01410803385078907
+                "feature": "AMD_1d_ret",
+                "importance": 0.017702460289001465
             },
             {
-                "feature": "NVDA_weighted_1d_ret",
-                "importance": 0.013994617387652397
+                "feature": "sector_disc_1d_ret",
+                "importance": 0.017601802945137024
             },
             {
-                "feature": "GOOGL_prev_day_ret",
-                "importance": 0.013767203316092491
+                "feature": "COST_weighted_1d_ret",
+                "importance": 0.01623452641069889
+            },
+            {
+                "feature": "sector_tech_1d_ret",
+                "importance": 0.016194595023989677
             }
         ]
     },
     "general": {
-        "train_accuracy": 0.6708385481852316,
-        "test_accuracy": 0.565,
-        "precision_macro": 0.5915358293075684,
-        "recall_macro": 0.5640980586716647,
-        "f1_macro": 0.572625411108059,
+        "train_accuracy": 0.6483103879849812,
+        "test_accuracy": 0.57,
+        "precision_macro": 0.6323101318249592,
+        "recall_macro": 0.5457882731151532,
+        "f1_macro": 0.5574431953742299,
         "classification_report": {
             "Bearish": {
-                "precision": 0.6739130434782609,
-                "recall": 0.5535714285714286,
-                "f1-score": 0.6078431372549019,
-                "support": 56.0
+                "precision": 0.6896551724137931,
+                "recall": 0.39215686274509803,
+                "f1-score": 0.5,
+                "support": 51.0
             },
             "Neutral": {
-                "precision": 0.4444444444444444,
-                "recall": 0.5633802816901409,
-                "f1-score": 0.4968944099378882,
-                "support": 71.0
+                "precision": 0.4838709677419355,
+                "recall": 0.759493670886076,
+                "f1-score": 0.5911330049261084,
+                "support": 79.0
             },
             "Bullish": {
-                "precision": 0.65625,
-                "recall": 0.5753424657534246,
-                "f1-score": 0.6131386861313869,
-                "support": 73.0
+                "precision": 0.723404255319149,
+                "recall": 0.4857142857142857,
+                "f1-score": 0.5811965811965812,
+                "support": 70.0
             },
-            "accuracy": 0.565,
+            "accuracy": 0.57,
             "macro avg": {
-                "precision": 0.5915358293075684,
-                "recall": 0.5640980586716647,
-                "f1-score": 0.572625411108059,
+                "precision": 0.6323101318249592,
+                "recall": 0.5457882731151532,
+                "f1-score": 0.5574431953742299,
                 "support": 200.0
             },
             "weighted avg": {
-                "precision": 0.5860046799516908,
-                "recall": 0.565,
-                "f1-score": 0.5703892143972791,
+                "precision": 0.6201825905852839,
+                "recall": 0.57,
+                "f1-score": 0.5644163403646162,
                 "support": 200.0
             }
         },
         "confusion_matrix": [
             [
-                31,
                 20,
-                5
+                29,
+                2
             ],
             [
-                14,
-                40,
-                17
+                8,
+                60,
+                11
             ],
             [
                 1,
-                30,
-                42
+                35,
+                34
             ]
         ],
         "feature_importances": [
             {
                 "feature": "breadth_pos_count_1h",
-                "importance": 0.0487062931060791
+                "importance": 0.04119877889752388
             },
             {
                 "feature": "market_weighted_avg_4h_ret",
-                "importance": 0.04448205605149269
+                "importance": 0.03695926070213318
             },
             {
-                "feature": "breadth_median_ret_1h",
-                "importance": 0.04322319105267525
+                "feature": "NVDA_weighted_4h_ret",
+                "importance": 0.03137970715761185
             },
             {
-                "feature": "breadth_max_ret_4h",
-                "importance": 0.03923088684678078
+                "feature": "sector_semi_1d_ret",
+                "importance": 0.030843503773212433
             },
             {
                 "feature": "breadth_avg_ret_4h",
-                "importance": 0.034040071070194244
-            },
-            {
-                "feature": "breadth_avg_ret_1h",
-                "importance": 0.033154118806123734
+                "importance": 0.029895707964897156
             },
             {
                 "feature": "breadth_median_ret_1d",
-                "importance": 0.03236685320734978
-            },
-            {
-                "feature": "breadth_max_ret_1d",
-                "importance": 0.025325246155261993
-            },
-            {
-                "feature": "market_weighted_avg_1h_ret",
-                "importance": 0.023529544472694397
-            },
-            {
-                "feature": "sector_comm_1h_ret",
-                "importance": 0.01951608993113041
-            },
-            {
-                "feature": "sector_tech_1h_ret",
-                "importance": 0.018912728875875473
-            },
-            {
-                "feature": "agreement_score_1d",
-                "importance": 0.01809096336364746
-            },
-            {
-                "feature": "market_weighted_avg_1d_ret",
-                "importance": 0.0180306788533926
-            },
-            {
-                "feature": "AAPL_1h_ret",
-                "importance": 0.01715187542140484
-            },
-            {
-                "feature": "breadth_max_ret_1h",
-                "importance": 0.016770189628005028
+                "importance": 0.02869807370007038
             },
             {
                 "feature": "breadth_avg_ret_1d",
-                "importance": 0.01631026528775692
+                "importance": 0.028672480955719948
             },
             {
-                "feature": "GOOGL_4h_ret",
-                "importance": 0.016240602359175682
+                "feature": "breadth_neg_count_1h",
+                "importance": 0.023859355598688126
             },
             {
-                "feature": "AAPL_weighted_1h_ret",
-                "importance": 0.015433684922754765
+                "feature": "breadth_median_ret_1h",
+                "importance": 0.023000791668891907
             },
             {
-                "feature": "NVDA_weighted_1d_ret",
-                "importance": 0.014836986549198627
+                "feature": "market_weighted_avg_1h_ret",
+                "importance": 0.020712338387966156
             },
             {
-                "feature": "sector_comm_4h_ret",
-                "importance": 0.014434409327805042
+                "feature": "breadth_median_ret_4h",
+                "importance": 0.020240891724824905
+            },
+            {
+                "feature": "breadth_min_ret_4h",
+                "importance": 0.018292108550667763
+            },
+            {
+                "feature": "NVDA_weighted_1h_ret",
+                "importance": 0.017935121431946754
+            },
+            {
+                "feature": "breadth_max_ret_4h",
+                "importance": 0.017574230208992958
+            },
+            {
+                "feature": "sector_staples_1d_ret",
+                "importance": 0.017246292904019356
+            },
+            {
+                "feature": "breadth_avg_ret_1h",
+                "importance": 0.017161982133984566
+            },
+            {
+                "feature": "NVDA_1h_ret",
+                "importance": 0.01653135195374489
+            },
+            {
+                "feature": "market_weighted_avg_1d_ret",
+                "importance": 0.016121678054332733
+            },
+            {
+                "feature": "breadth_max_ret_1h",
+                "importance": 0.015484689734876156
+            },
+            {
+                "feature": "agreement_score_1d",
+                "importance": 0.015373156405985355
             }
         ]
     }
