@@ -10,10 +10,10 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 
 # Configuration (must match training script)
-STOCKS = ["MSFT", "AAPL", "NVDA", "AMZN", "META", "AVGO", "TSLA", "COST", "GOOGL", "GOOG"]
+STOCKS = ["MSFT", "NVDA", "AAPL", "AMZN", "META", "AVGO", "GOOGL", "TSLA", "COST", "AMD"]
 WEIGHTS = {
-    'MSFT': 0.17, 'AAPL': 0.17, 'NVDA': 0.16, 'AMZN': 0.10, 'META': 0.09,
-    'AVGO': 0.10, 'TSLA': 0.07, 'COST': 0.04, 'GOOGL': 0.05, 'GOOG': 0.05
+    'MSFT': 0.16, 'NVDA': 0.15, 'AAPL': 0.14, 'AMZN': 0.09, 'META': 0.08,
+    'AVGO': 0.08, 'GOOGL': 0.05, 'TSLA': 0.04, 'COST': 0.03, 'AMD': 0.03
 }
 
 from pathlib import Path
@@ -82,11 +82,11 @@ def engineer_features_single(input_data, mode):
             weighted_1h.append(features[f'{s}_weighted_1h_ret'])
             
         features['market_weighted_avg_1h_ret'] = sum(weighted_1h)
-        features['sector_tech_1h_ret'] = np.mean([features['MSFT_1h_ret'], features['AAPL_1h_ret'], features['AVGO_1h_ret']])
-        features['sector_comm_1h_ret'] = np.mean([features['META_1h_ret'], features['GOOGL_1h_ret'], features['GOOG_1h_ret']])
+        features['sector_tech_1h_ret'] = np.mean([features['MSFT_1h_ret'], features['AAPL_1h_ret']])
+        features['sector_comm_1h_ret'] = np.mean([features['META_1h_ret'], features['GOOGL_1h_ret']])
         features['sector_disc_1h_ret'] = np.mean([features['AMZN_1h_ret'], features['TSLA_1h_ret']])
         features['sector_staples_1h_ret'] = features['COST_1h_ret']
-        features['sector_semi_1h_ret'] = np.mean([features['NVDA_1h_ret'], features['AVGO_1h_ret']])
+        features['sector_semi_1h_ret'] = np.mean([features['NVDA_1h_ret'], features['AVGO_1h_ret'], features['AMD_1h_ret']])
         
         ret_cols_1h = [features[f'{s}_1h_ret'] for s in STOCKS]
         pos_count = sum(1 for r in ret_cols_1h if r > 0)
@@ -109,11 +109,11 @@ def engineer_features_single(input_data, mode):
             weighted_4h.append(features[f'{s}_weighted_4h_ret'])
             
         features['market_weighted_avg_4h_ret'] = sum(weighted_4h)
-        features['sector_tech_4h_ret'] = np.mean([features['MSFT_4h_ret'], features['AAPL_4h_ret'], features['AVGO_4h_ret']])
-        features['sector_comm_4h_ret'] = np.mean([features['META_4h_ret'], features['GOOGL_4h_ret'], features['GOOG_4h_ret']])
+        features['sector_tech_4h_ret'] = np.mean([features['MSFT_4h_ret'], features['AAPL_4h_ret']])
+        features['sector_comm_4h_ret'] = np.mean([features['META_4h_ret'], features['GOOGL_4h_ret']])
         features['sector_disc_4h_ret'] = np.mean([features['AMZN_4h_ret'], features['TSLA_4h_ret']])
         features['sector_staples_4h_ret'] = features['COST_4h_ret']
-        features['sector_semi_4h_ret'] = np.mean([features['NVDA_4h_ret'], features['AVGO_4h_ret']])
+        features['sector_semi_4h_ret'] = np.mean([features['NVDA_4h_ret'], features['AVGO_4h_ret'], features['AMD_4h_ret']])
         
         ret_cols_4h = [features[f'{s}_4h_ret'] for s in STOCKS]
         pos_count = sum(1 for r in ret_cols_4h if r > 0)
@@ -137,11 +137,11 @@ def engineer_features_single(input_data, mode):
             weighted_1d.append(features[f'{s}_weighted_1d_ret'])
             
         features['market_weighted_avg_1d_ret'] = sum(weighted_1d)
-        features['sector_tech_1d_ret'] = np.mean([features['MSFT_1d_ret'], features['AAPL_1d_ret'], features['AVGO_1d_ret']])
-        features['sector_comm_1d_ret'] = np.mean([features['META_1d_ret'], features['GOOGL_1d_ret'], features['GOOG_1d_ret']])
+        features['sector_tech_1d_ret'] = np.mean([features['MSFT_1d_ret'], features['AAPL_1d_ret']])
+        features['sector_comm_1d_ret'] = np.mean([features['META_1d_ret'], features['GOOGL_1d_ret']])
         features['sector_disc_1d_ret'] = np.mean([features['AMZN_1d_ret'], features['TSLA_1d_ret']])
         features['sector_staples_1d_ret'] = features['COST_1d_ret']
-        features['sector_semi_1d_ret'] = np.mean([features['NVDA_1d_ret'], features['AVGO_1d_ret']])
+        features['sector_semi_1d_ret'] = np.mean([features['NVDA_1d_ret'], features['AVGO_1d_ret'], features['AMD_1d_ret']])
         
         ret_cols_1d = [features[f'{s}_1d_ret'] for s in STOCKS]
         pos_count = sum(1 for r in ret_cols_1d if r > 0)
@@ -396,20 +396,17 @@ def save_prediction(request):
         except (ValueError, TypeError):
             trade_date = datetime.date.today()
 
-        # Check for existing entry for same date+mode (avoid duplicates)
-        existing = TradingDay.objects.filter(date=trade_date, mode=mode).first()
-        if existing:
-            messages.warning(request, f'Entry for {trade_date} ({mode.upper()}) already saved. Update the outcome below.')
-        else:
-            TradingDay.objects.create(
-                date=trade_date,
-                mode=mode,
-                raw_inputs=raw_inputs,
-                model_prediction=prediction,
-                model_confidence=confidence,
-                actual_outcome=''
-            )
-            messages.success(request, f'✅ Saved! Enter the actual NQ outcome after market close.')
+        # Allow multiple saves per day (e.g. 1H data at 9:00, 9:15, 9:20)
+        TradingDay.objects.create(
+            date=trade_date,
+            mode=mode,
+            raw_inputs=raw_inputs,
+            model_prediction=prediction,
+            model_confidence=confidence,
+            actual_outcome=''
+        )
+        time_now = datetime.datetime.now().strftime('%H:%M')
+        messages.success(request, f'✅ Saved at {time_now}! Enter the actual NQ outcome after market close.')
 
     return redirect('training_data')
 
@@ -488,11 +485,11 @@ def retrain_model(request):
             feat[f'{s}_weighted_1h_ret'] = val * WEIGHTS[s]
         vals_1h = [inp.get(f'{s}_1h_ret', 0.0) for s in STOCKS]
         feat['market_weighted_avg_1h_ret'] = sum(feat[f'{s}_weighted_1h_ret'] for s in STOCKS)
-        feat['sector_tech_1h_ret']  = np.mean([feat['MSFT_1h_ret'], feat['AAPL_1h_ret'], feat['AVGO_1h_ret']])
-        feat['sector_comm_1h_ret']  = np.mean([feat['META_1h_ret'], feat['GOOGL_1h_ret'], feat['GOOG_1h_ret']])
+        feat['sector_tech_1h_ret']  = np.mean([feat['MSFT_1h_ret'], feat['AAPL_1h_ret']])
+        feat['sector_comm_1h_ret']  = np.mean([feat['META_1h_ret'], feat['GOOGL_1h_ret']])
         feat['sector_disc_1h_ret']  = np.mean([feat['AMZN_1h_ret'], feat['TSLA_1h_ret']])
         feat['sector_staples_1h_ret'] = feat['COST_1h_ret']
-        feat['sector_semi_1h_ret']  = np.mean([feat['NVDA_1h_ret'], feat['AVGO_1h_ret']])
+        feat['sector_semi_1h_ret']  = np.mean([feat['NVDA_1h_ret'], feat['AVGO_1h_ret'], feat['AMD_1h_ret']])
         pos = sum(1 for r in vals_1h if r > 0)
         neg = sum(1 for r in vals_1h if r < 0)
         feat['breadth_pos_count_1h']  = float(pos)
@@ -510,11 +507,11 @@ def retrain_model(request):
             feat[f'{s}_weighted_4h_ret'] = val * WEIGHTS[s]
         vals_4h = [inp.get(f'{s}_4h_ret', 0.0) for s in STOCKS]
         feat['market_weighted_avg_4h_ret'] = sum(feat[f'{s}_weighted_4h_ret'] for s in STOCKS)
-        feat['sector_tech_4h_ret']  = np.mean([feat['MSFT_4h_ret'], feat['AAPL_4h_ret'], feat['AVGO_4h_ret']])
-        feat['sector_comm_4h_ret']  = np.mean([feat['META_4h_ret'], feat['GOOGL_4h_ret'], feat['GOOG_4h_ret']])
+        feat['sector_tech_4h_ret']  = np.mean([feat['MSFT_4h_ret'], feat['AAPL_4h_ret']])
+        feat['sector_comm_4h_ret']  = np.mean([feat['META_4h_ret'], feat['GOOGL_4h_ret']])
         feat['sector_disc_4h_ret']  = np.mean([feat['AMZN_4h_ret'], feat['TSLA_4h_ret']])
         feat['sector_staples_4h_ret'] = feat['COST_4h_ret']
-        feat['sector_semi_4h_ret']  = np.mean([feat['NVDA_4h_ret'], feat['AVGO_4h_ret']])
+        feat['sector_semi_4h_ret']  = np.mean([feat['NVDA_4h_ret'], feat['AVGO_4h_ret'], feat['AMD_4h_ret']])
         pos4 = sum(1 for r in vals_4h if r > 0)
         neg4 = sum(1 for r in vals_4h if r < 0)
         feat['breadth_pos_count_4h']  = float(pos4)
@@ -534,11 +531,11 @@ def retrain_model(request):
             feat[f'{s}_weighted_1d_ret'] = val1d * WEIGHTS[s]
         vals_1d = [inp.get(f'{s}_1d_ret', 0.0) for s in STOCKS]
         feat['market_weighted_avg_1d_ret'] = sum(feat[f'{s}_weighted_1d_ret'] for s in STOCKS)
-        feat['sector_tech_1d_ret']  = np.mean([feat['MSFT_1d_ret'], feat['AAPL_1d_ret'], feat['AVGO_1d_ret']])
-        feat['sector_comm_1d_ret']  = np.mean([feat['META_1d_ret'], feat['GOOGL_1d_ret'], feat['GOOG_1d_ret']])
+        feat['sector_tech_1d_ret']  = np.mean([feat['MSFT_1d_ret'], feat['AAPL_1d_ret']])
+        feat['sector_comm_1d_ret']  = np.mean([feat['META_1d_ret'], feat['GOOGL_1d_ret']])
         feat['sector_disc_1d_ret']  = np.mean([feat['AMZN_1d_ret'], feat['TSLA_1d_ret']])
         feat['sector_staples_1d_ret'] = feat['COST_1d_ret']
-        feat['sector_semi_1d_ret']  = np.mean([feat['NVDA_1d_ret'], feat['AVGO_1d_ret']])
+        feat['sector_semi_1d_ret']  = np.mean([feat['NVDA_1d_ret'], feat['AVGO_1d_ret'], feat['AMD_1d_ret']])
         pos1d = sum(1 for r in vals_1d if r > 0)
         neg1d = sum(1 for r in vals_1d if r < 0)
         feat['breadth_pos_count_1d']  = float(pos1d)

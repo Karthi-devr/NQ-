@@ -7,14 +7,14 @@ from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 # Configurations
-STOCKS = ["MSFT", "AAPL", "NVDA", "AMZN", "META", "GOOGL", "GOOG", "AVGO", "TSLA", "COST"]
+STOCKS = ["MSFT", "NVDA", "AAPL", "AMZN", "META", "AVGO", "GOOGL", "TSLA", "COST", "AMD"]
 INDEX = "^NDX"
 DATA_DIR = "data"
 MODELS_DIR = "models"
 
 WEIGHTS = {
-    'MSFT': 0.17, 'AAPL': 0.17, 'NVDA': 0.16, 'AMZN': 0.10, 'META': 0.09,
-    'AVGO': 0.10, 'TSLA': 0.07, 'COST': 0.04, 'GOOGL': 0.05, 'GOOG': 0.05
+    'MSFT': 0.16, 'NVDA': 0.15, 'AAPL': 0.14, 'AMZN': 0.09, 'META': 0.08,
+    'AVGO': 0.08, 'GOOGL': 0.05, 'TSLA': 0.04, 'COST': 0.03, 'AMD': 0.03
 }
 
 def load_index_data():
